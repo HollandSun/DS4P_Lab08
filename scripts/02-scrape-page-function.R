@@ -1,27 +1,38 @@
-# load packages ----------------------------------------------------------------
-
+# load packages
 library(tidyverse)
 library(rvest)
 
-# function: scrape_page --------------------------------------------------------
+# function: scrape_page
+scrape_page <- function(url){
 
-___ <- function(url){
-  
   # read page
   page <- read_html(url)
-  
+
   # scrape titles
-  titles <- ___
-  
+  titles <- page %>%
+    html_nodes(".iteminfo") %>%
+    html_node("h3 a") %>%
+    html_text() %>%
+    str_squish()
+
   # scrape links
-  links <- ___
-  
-  # scrape artists 
-  artists <- ___
-  
+  links <- page %>%
+    html_nodes(".iteminfo") %>%
+    html_node("h3 a") %>%
+    html_attr("href") %>%
+    str_replace("/art/", "https://collections.ed.ac.uk/art/")
+
+  # scrape artists
+  artists <- page %>%
+    html_nodes(".iteminfo") %>%
+    html_node(".artist") %>%
+    html_text()
+
   # create and return tibble
   tibble(
-    ___
+    title = titles,
+    artist = artists,
+    link = links
   )
-  
+
 }
